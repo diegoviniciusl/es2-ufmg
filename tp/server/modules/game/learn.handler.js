@@ -1,0 +1,17 @@
+// const { Game } = require('../../models');
+
+// const handler = async (req, res) => {
+//   const { body } = req;
+//   const { games, won } = body;
+
+// const object = { a: 1, b: 2, c: 3 };
+
+// for (const property in object) {
+//   console.log(`${property}: ${object[property]}`);
+// }
+
+// };
+
+// module.exports = {
+//   handler,
+// };

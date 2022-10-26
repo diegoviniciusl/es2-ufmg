@@ -1,0 +1,13 @@
+version: "3.2"
+
+services:
+  postgres:
+    image: postgres:10.6-alpine
+    environment:
+      POSTGRES_USER: learner
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5432:5432"
+
+volumes:
+  postgres:

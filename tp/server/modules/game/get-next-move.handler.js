@@ -3,7 +3,7 @@ const { cellPieceType } = require('../../helpers/constants');
 
 const getRowFromCellId = (cellId) => parseInt(cellId / 3, 10);
 
-const getPossibleMovesForCell = async (gameId, cellId) => {
+const getPossibleMovesForCell = (gameId, cellId) => {
   const row = getRowFromCellId(cellId);
   const gameIdList = gameId.split('');
 
@@ -28,18 +28,37 @@ const getPossibleMovesForCell = async (gameId, cellId) => {
   return moves;
 };
 
-const getPossibleMoves = async (gameId) => {
+const getNewGameFromMove = (gameId, fromCellId, toCellId) => {
+  const newGameId = gameId.split('');
+  newGameId[fromCellId] = cellPieceType.blank;
+  newGameId[toCellId] = cellPieceType.computer;
+  return newGameId.join('');
+};
+
+const getPossibleMoves = (gameId) => {
+  const games = [];
   gameId.split('').forEach((cellPiece, cellId) => {
     if (cellPiece !== cellPieceType.computer) return;
-    const possibleMoves = getPossibleMovesForCell(gameId, cellId);
-    // possibleMoves.forEach((possibleMove) => )
+    const possibleMovesCellIds = getPossibleMovesForCell(gameId, cellId);
+    possibleMovesCellIds.forEach((possibleMoveCellId) => games.push(getNewGameFromMove(gameId, cellId, possibleMoveCellId)));
   });
+  return games;
 };
 
 const createNewGame = async (gameId) => {
   const moves = {};
   getPossibleMoves(gameId).forEach((move) => { moves[move] = 1; });
   return Game.create({ gameId, moves });
+};
+
+const getNewGame = (game) => {
+  const games = [];
+  Object.entries(game.moves).forEach(([newGame, times]) => {
+    Array(times).fill().forEach(() => {
+      games.push(newGame);
+    });
+  });
+  return games[Math.floor(Math.random() * games.length)];
 };
 
 const handler = async (req, res) => {
@@ -56,7 +75,9 @@ const handler = async (req, res) => {
     game = await createNewGame(gameId);
   }
 
-  return res.status(200).json(game);
+  const newGame = getNewGame(game);
+
+  return res.status(200).json({ newGame });
 };
 
 module.exports = {

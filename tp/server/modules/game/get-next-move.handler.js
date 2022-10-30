@@ -1,17 +1,19 @@
 const { Game } = require('../../models');
 const { cellPieceType } = require('../../helpers/constants');
 
-const getRowFromCellId = (cellId) => parseInt(cellId / 3, 10);
+const { ROWS } = process.env || 3;
+
+const getRowFromCellId = (cellId) => parseInt(cellId / ROWS, 10);
 
 const getPossibleMovesForCell = (gameId, cellId) => {
   const row = getRowFromCellId(cellId);
   const gameIdList = gameId.split('');
 
-  const diagonalLeftCellId = cellId + 2;
+  const diagonalLeftCellId = cellId + ROWS - 1;
   const diagonalLeftPiece = gameIdList[diagonalLeftCellId];
-  const frontCellId = cellId + 3;
+  const frontCellId = cellId + ROWS;
   const frontPiece = gameIdList[frontCellId];
-  const diagonalRightCellId = cellId + 4;
+  const diagonalRightCellId = cellId + ROWS + 1;
   const diagonalRightPiece = gameIdList[diagonalRightCellId];
 
   const moves = [];
@@ -47,7 +49,7 @@ const getPossibleMoves = (gameId) => {
 
 const createNewGame = async (gameId) => {
   const moves = {};
-  getPossibleMoves(gameId).forEach((move) => { moves[move] = 1; });
+  getPossibleMoves(gameId).forEach((move) => { moves[move] = 5; });
   return Game.create({ gameId, moves });
 };
 

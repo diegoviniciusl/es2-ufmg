@@ -5,30 +5,27 @@ const ROWS = Number(process.env.ROWS || 3);
 
 const getRowFromCellId = (cellId) => Math.floor(cellId / ROWS);
 
-const getPossibleMovesForCell = (gameId, cellId) => {
+const getMoves = ({ gameId, cellId }, data) => {
   const row = getRowFromCellId(cellId);
-  const gameIdList = gameId.split('');
+  return data.filter((value) => gameId[value.cellId] === value.comparisonPiece && row + 1 === getRowFromCellId(value.cellId)).map((value) => value.cellId);
+};
 
-  const diagonalLeftCellId = cellId + ROWS - 1;
-  const diagonalLeftPiece = gameIdList[diagonalLeftCellId];
-  const frontCellId = cellId + ROWS;
-  const frontPiece = gameIdList[frontCellId];
+const getPossibleMovesForCell = (gameId, cellId) => {
+  const data = [];
+  data.push({
+    cellId: cellId + ROWS - 1,
+    comparisonPiece: cellPieceType.user,
+  });
+  data.push({
+    cellId: cellId + ROWS,
+    comparisonPiece: cellPieceType.blank,
+  });
+  data.push({
+    cellId: cellId + ROWS + 1,
+    comparisonPiece: cellPieceType.user,
+  });
 
-  const diagonalRightCellId = cellId + ROWS + 1;
-  const diagonalRightPiece = gameIdList[diagonalRightCellId];
-
-  const moves = [];
-  if (diagonalLeftPiece === cellPieceType.user && row + 1 === getRowFromCellId(diagonalLeftCellId)) {
-    moves.push(diagonalLeftCellId);
-  }
-  if (frontPiece === cellPieceType.blank && row + 1 === getRowFromCellId(frontCellId)) {
-    moves.push(frontCellId);
-  }
-  if (diagonalRightPiece === cellPieceType.user && row + 1 === getRowFromCellId(diagonalRightCellId)) {
-    moves.push(diagonalRightCellId);
-  }
-
-  return moves;
+  return getMoves({ gameId, cellId }, data);
 };
 
 const getNewGameFromMove = (gameId, fromCellId, toCellId) => {

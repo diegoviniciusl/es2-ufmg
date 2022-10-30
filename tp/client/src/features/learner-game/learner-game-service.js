@@ -37,32 +37,30 @@ const getOpponentPieceType = (playerCellPieceType) => (playerCellPieceType === c
 
 const getRowFromCellId = (cellId) => parseInt(cellId / ROWS, 10);
 
+const getMoves = ({ gameId, cellId, multiplier }, data) => {
+  const row = getRowFromCellId(cellId);
+  return data.filter((value) => gameId[value.cellId] === value.comparisonPiece && row + multiplier === getRowFromCellId(value.cellId)).map((value) => value.cellId);
+};
+
 const getPossibleCellIdMoves = (gameId, cellId) => {
   const multiplier = gameId[cellId] === cellPieceType.user ? -1 : 1;
   const opponentCellPieceType = getOpponentPieceType(gameId[cellId]);
 
-  const row = getRowFromCellId(cellId);
-  const gameIdList = gameId.split('');
+  const data = [];
+  data.push({
+    cellId: cellId + ((ROWS - 1) * multiplier),
+    comparisonPiece: opponentCellPieceType,
+  });
+  data.push({
+    cellId: cellId + (ROWS * multiplier),
+    comparisonPiece: cellPieceType.blank,
+  });
+  data.push({
+    cellId: cellId + ((ROWS + 1) * multiplier),
+    comparisonPiece: opponentCellPieceType,
+  });
 
-  const diagonalLeftCellId = cellId + ((ROWS - 1) * multiplier);
-  const diagonalLeftPiece = gameIdList[diagonalLeftCellId];
-  const frontCellId = cellId + ((ROWS) * multiplier);
-  const frontPiece = gameIdList[frontCellId];
-  const diagonalRightCellId = cellId + ((ROWS + 1) * multiplier);
-  const diagonalRightPiece = gameIdList[diagonalRightCellId];
-
-  const moves = [];
-  if (diagonalLeftPiece === opponentCellPieceType && row + multiplier === getRowFromCellId(diagonalLeftCellId)) {
-    moves.push(diagonalLeftCellId);
-  }
-  if (frontPiece === cellPieceType.blank && row + multiplier === getRowFromCellId(frontCellId)) {
-    moves.push(frontCellId);
-  }
-  if (diagonalRightPiece === opponentCellPieceType && row + multiplier === getRowFromCellId(diagonalRightCellId)) {
-    moves.push(diagonalRightCellId);
-  }
-
-  return moves;
+  return getMoves({ gameId, cellId, multiplier }, data);
 };
 
 const isPlayerAtTheEndline = (gameId, playerCellPieceType) => Array(ROWS).fill().some((_, cellId) => {

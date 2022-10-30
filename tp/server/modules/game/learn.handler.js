@@ -1,11 +1,21 @@
 const Sequelize = require('sequelize');
 const { Game } = require('../../models');
 
-const resetMoves = (game) => {
-  Object.keys(game.moves).forEach((gameId) => { game.moves[gameId] = 5; });
-};
+const resetMoves = (game) => Object.keys(game.moves).forEach((gameId) => { game.moves[gameId] = 5; });
 
 const hasNoPossibleMoves = (game) => Object.values(game.moves).every((times) => (times === 0));
+
+const getNewGame = async (game, { games, won }) => {
+  const nextGameId = games[game.gameId];
+  game.moves[nextGameId] += won ? 1 : -1;
+  if (game.moves[nextGameId] < 0) return new Promise();
+
+  game.changed('moves', true);
+
+  if (hasNoPossibleMoves(game)) resetMoves(game);
+
+  return game.save();
+};
 
 const handler = async (req, res) => {
   const { body } = req;
@@ -17,23 +27,9 @@ const handler = async (req, res) => {
       },
     },
   });
-  const updatePromises = [];
-  existingGames.forEach((existingGame) => {
-    Object.entries(games).forEach(([gameId, nextGameId]) => {
-      if (gameId !== existingGame.gameId) return;
-      if (!existingGame.moves || !existingGame.moves[nextGameId]) return;
-      existingGame.moves[nextGameId] += won ? 1 : -1;
-      if (existingGame.moves[nextGameId] < 0) return;
-      existingGame.changed('moves', true);
+  const existingGamesUpdates = existingGames.map((existingGame) => (getNewGame(existingGame, { games, won })));
+  await Promise.all(existingGamesUpdates);
 
-      if (hasNoPossibleMoves(existingGame)) {
-        resetMoves(existingGame);
-      }
-
-      updatePromises.push(existingGame.save());
-    });
-  });
-  await Promise.all(updatePromises);
   return res.status(200).json();
 };
 

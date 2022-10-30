@@ -1,5 +1,15 @@
 import axios from 'axios';
-import { cellPieceType, LEARNER_API } from '../../shared/constants';
+import { cellPieceType, LEARNER_API, ROWS } from '../../shared/constants';
+
+const getInitialGame = () => {
+  let initialGameId = '';
+
+  Array(ROWS).fill().forEach(() => { initialGameId += cellPieceType.computer; });
+  Array(ROWS * (ROWS - 2)).fill().forEach(() => { initialGameId += cellPieceType.blank; });
+  Array(ROWS).fill().forEach(() => { initialGameId += cellPieceType.user; });
+
+  return initialGameId;
+};
 
 const makeComputerLearn = async ({ won, games }) => {
   await axios.post(`${LEARNER_API}/game/learn`, {
@@ -25,7 +35,7 @@ const getNewGameFromMove = (gameId, fromCellId, toCellId) => {
 
 const getOpponentPieceType = (playerCellPieceType) => (playerCellPieceType === cellPieceType.user ? cellPieceType.computer : cellPieceType.user);
 
-const getRowFromCellId = (cellId) => parseInt(cellId / 3, 10);
+const getRowFromCellId = (cellId) => parseInt(cellId / ROWS, 10);
 
 const getPossibleCellIdMoves = (gameId, cellId) => {
   const multiplier = gameId[cellId] === cellPieceType.user ? -1 : 1;
@@ -34,11 +44,11 @@ const getPossibleCellIdMoves = (gameId, cellId) => {
   const row = getRowFromCellId(cellId);
   const gameIdList = gameId.split('');
 
-  const diagonalLeftCellId = cellId + (2 * multiplier);
+  const diagonalLeftCellId = cellId + ((ROWS - 1) * multiplier);
   const diagonalLeftPiece = gameIdList[diagonalLeftCellId];
-  const frontCellId = cellId + (3 * multiplier);
+  const frontCellId = cellId + ((ROWS) * multiplier);
   const frontPiece = gameIdList[frontCellId];
-  const diagonalRightCellId = cellId + (4 * multiplier);
+  const diagonalRightCellId = cellId + ((ROWS + 1) * multiplier);
   const diagonalRightPiece = gameIdList[diagonalRightCellId];
 
   const moves = [];
@@ -55,10 +65,10 @@ const getPossibleCellIdMoves = (gameId, cellId) => {
   return moves;
 };
 
-const isPlayerAtTheEndline = (gameId, playerCellPieceType) => {
-  const keys = playerCellPieceType === cellPieceType.user ? [0, 1, 2] : [6, 7, 8];
-  return keys.some((key) => (gameId[key] === playerCellPieceType));
-};
+const isPlayerAtTheEndline = (gameId, playerCellPieceType) => Array(ROWS).fill().some((_, cellId) => {
+  if (playerCellPieceType === cellPieceType.user) return gameId[cellId] === playerCellPieceType;
+  return gameId[(ROWS * ROWS) - 1 - cellId] === playerCellPieceType;
+});
 
 const didPlayerAteAllOpponentPieces = (gameId, playerCellPieceType) => {
   const opponentCellPieceType = getOpponentPieceType(playerCellPieceType);
@@ -87,4 +97,5 @@ export default {
   getGameAfterComputerMove,
   didPlayerWin,
   makeComputerLearn,
+  getInitialGame,
 };

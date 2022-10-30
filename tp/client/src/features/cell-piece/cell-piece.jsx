@@ -1,14 +1,15 @@
 import React from 'react';
 import { BsFillCircleFill, BsFillTriangleFill } from 'react-icons/bs';
-import { cellPieceType } from '../../shared/constants';
+import { cellPieceType, ROWS } from '../../shared/constants';
 
 function CellPiece({ cellPiece }) {
+  const size = (500 / ROWS) * 0.7;
   const cellPieces = {
     [cellPieceType.computer]: (
-      <BsFillTriangleFill color="white" size="70px" />
+      <BsFillTriangleFill color="white" size={size} />
     ),
     [cellPieceType.user]: (
-      <BsFillCircleFill color="white" size="70px" />
+      <BsFillCircleFill color="white" size={size} />
     ),
     [cellPieceType.blank]: null,
   };

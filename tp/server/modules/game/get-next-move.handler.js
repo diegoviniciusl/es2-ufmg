@@ -1,9 +1,9 @@
 const { Game } = require('../../models');
 const { cellPieceType } = require('../../helpers/constants');
 
-const { ROWS } = process.env || 3;
+const ROWS = Number(process.env.ROWS || 3);
 
-const getRowFromCellId = (cellId) => parseInt(cellId / ROWS, 10);
+const getRowFromCellId = (cellId) => Math.floor(cellId / ROWS);
 
 const getPossibleMovesForCell = (gameId, cellId) => {
   const row = getRowFromCellId(cellId);
@@ -13,6 +13,7 @@ const getPossibleMovesForCell = (gameId, cellId) => {
   const diagonalLeftPiece = gameIdList[diagonalLeftCellId];
   const frontCellId = cellId + ROWS;
   const frontPiece = gameIdList[frontCellId];
+
   const diagonalRightCellId = cellId + ROWS + 1;
   const diagonalRightPiece = gameIdList[diagonalRightCellId];
 

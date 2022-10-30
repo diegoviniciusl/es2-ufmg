@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import Table from '../table/table';
 import LearnerGameService from './learner-game-service';
-import { cellPieceType, players } from '../../shared/constants';
+import { cellPieceType, players, ROWS } from '../../shared/constants';
 
 function LearnerGame() {
-  const [gameId, setGameId] = useState('222000111');
+  const [gameId, setGameId] = useState(LearnerGameService.getInitialGame());
   const [isMoveDisabled, setIsMoveDisabled] = useState(false);
   const [winner, setWinner] = useState(null);
   const [games, setGames] = useState({});
@@ -21,8 +21,8 @@ function LearnerGame() {
     }
 
     const gameIdAfterComputerMove = await LearnerGameService.getGameAfterComputerMove(gameIdAfterPlayerMove);
-    await (new Promise((resolve) => setTimeout(resolve, 200)));
-    if (gameIdAfterComputerMove?.length !== 9) return;
+    await (new Promise((resolve) => setTimeout(resolve, 500)));
+    if (gameIdAfterComputerMove?.length !== (ROWS * ROWS)) return;
     setGameId(gameIdAfterComputerMove);
 
     setGames({

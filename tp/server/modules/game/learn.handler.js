@@ -7,8 +7,8 @@ const hasNoPossibleMoves = (game) => Object.values(game.moves).every((times) => 
 
 const getNewGame = async (game, { games, won }) => {
   const nextGameId = games[game.gameId];
-  game.moves[nextGameId] += won ? 1 : -1;
-  if (game.moves[nextGameId] < 0) return new Promise();
+  game.moves[nextGameId] += won ? 1 : -2;
+  if (game.moves[nextGameId] < 0) game.moves[nextGameId] = 0;
 
   game.changed('moves', true);
 

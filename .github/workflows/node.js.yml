@@ -25,5 +25,5 @@ jobs:
         cache: 'npm'
         cache-dependency-path: 'atv-6/package-lock.json'
     - run: cd atv-6
-    - run: npm ci
+    - run: npm i
     - run: npm test

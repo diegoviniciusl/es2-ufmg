@@ -31,4 +31,6 @@ jobs:
         cache: 'npm'
         cache-dependency-path: 'tp/server/package-lock.json'
     - run: cd tp/server && npm ci
+    - run: cd tp/server && npm run db:create:test
+    - run: cd tp/server && npm run db:migrate:test
     - run: cd tp/server && npm test

@@ -33,6 +33,6 @@ jobs:
     - run: cd tp/server && npm ci
     - run: cd tp/server && npm run db:create:test
     - run: cd tp/server && npm run db:migrate:test
-    - run: cd tp/server && npm test:it
+    - run: cd tp/server && npm run test:it
     - run: cd tp/client && npm ci
-    - run: cd tp/client && npm test:unit
+    - run: cd tp/client && npm run test:unit

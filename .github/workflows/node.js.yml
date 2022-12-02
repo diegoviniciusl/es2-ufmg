@@ -15,14 +15,20 @@ jobs:
     strategy:
       matrix:
         os: [windows-latest, ubuntu-latest, macos-latest]
-        node-version: [14.x, 16.x, 18.x]
+        node-version: [18.x]
     steps:
     - uses: actions/checkout@v3
+    - uses: isbang/compose-action@v1.4.1
+      with:
+        compose-file: "./tp/server/docker-compose.yml"
+        down-flags: "--volumes"
+        services: |
+          postgres
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v3
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
-        cache-dependency-path: 'atv-6/package-lock.json'
-    - run: cd atv-6 && npm ci
-    - run: cd atv-6 && npm test
+        cache-dependency-path: 'tp/server/package-lock.json'
+    - run: cd tp/server && npm ci
+    - run: cd tp/server && npm test

@@ -13,5 +13,15 @@
         "no-console": 0,
         "max-len": "off",
         "no-param-reassign": "off"
-    }
+    },
+    "overrides": [
+        {
+            "files": [
+                "__test__/**/*"
+            ],
+            "env": {
+                "jest": true
+            }
+        }
+    ]
 }

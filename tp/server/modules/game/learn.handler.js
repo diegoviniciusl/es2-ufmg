@@ -20,6 +20,14 @@ const getNewGame = async (game, { games, won }) => {
 const handler = async (req, res) => {
   const { body } = req;
   const { games, won } = body;
+
+  if (games === undefined) {
+    return res.status(400).json({ errors: { message: 'Missing body.games' } });
+  }
+  if (won === undefined) {
+    return res.status(400).json({ errors: { message: 'Missing body.won' } });
+  }
+
   const existingGames = await Game.findAll({
     where: {
       gameId: {

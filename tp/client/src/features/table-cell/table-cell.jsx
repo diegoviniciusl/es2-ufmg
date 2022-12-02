@@ -13,6 +13,7 @@ function TableCell({
     <div
       onClick={() => onClick(cellId)}
       className={`flex justify-center items-center border-solid w-full h-full ${backgroundColor} cursor-pointer`}
+      data-testid="table-cell"
     >
       <CellPiece cellPiece={cellPiece} />
     </div>

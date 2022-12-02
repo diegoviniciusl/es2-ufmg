@@ -9,7 +9,7 @@
     "db:create:test": "NODE_ENV=test npx sequelize-cli db:create",
     "db:migrate:test": "NODE_ENV=test npx sequelize-cli db:migrate",
     "migration:generate": "npx sequelize-cli migration:generate",
-    "test": "jest"
+    "test:it": "jest"
   },
   "dependencies": {
     "cors": "^2.8.5",
